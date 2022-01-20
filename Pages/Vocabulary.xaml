@@ -28,7 +28,7 @@
                   Panel.ZIndex="-1" VerticalAlignment="Center">
             <Expander.Header>
                 <controls:Timer x:Name="timer" AlarmColor="Red"
-                            Seconds="30" Threshold="10" InitText="START" EndText="Oops!"/>
+                            Seconds="3" Threshold="10" InitText="START" EndText="Oops!"/>
             </Expander.Header>
             
             <UniformGrid Columns="2">

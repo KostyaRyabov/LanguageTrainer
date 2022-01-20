@@ -28,13 +28,13 @@ namespace LanguageTrainer.Source.Controls
     {
         public Path Path { get; set; }
 
-        private readonly Dictionary<((string, string, double), (string, string, double)), List<PathGeometry>> cache;
-        private List<PathGeometry> textAnimation;
-        private List<PathGeometry>.Enumerator textAnimationEnumerator;
+        private readonly Dictionary<((string, string, double), (string, string, double), double), List<PathGeometry>> cache;
+        private TextAnimation textAnim;
+
 
         public MorphTextBox()
         {
-            cache = new Dictionary<((string, string, double), (string, string, double)), List<PathGeometry>>();
+            cache = new Dictionary<((string, string, double), (string, string, double), double), List<PathGeometry>>();
 
             this.Path = new Path() {
                 Data                = new PathGeometry(),
@@ -90,20 +90,28 @@ namespace LanguageTrainer.Source.Controls
         {
             if (PreviousState == CurrentState) return;
 
-            var textAnimationIsCached = false;
+            var textAnimationNotFound = true;
+            var transition = (PreviousState, CurrentState, AnimationSpeed);
 
-            if (!IsCached || (IsCached && !(textAnimationIsCached = cache.TryGetValue((PreviousState, CurrentState), out textAnimation))))
+            if (!IsCached || (IsCached && (textAnimationNotFound = !cache.ContainsKey(transition))))
             {
-                textAnimation = Morph.ToCache(
-                    source: (PathGeometry)Path.Data,
-                    target: Text.ToPathGeometry(FontName, FontSize),
-                    speed: AnimationSpeed
+                textAnim = new TextAnimation(
+                    from    : (PathGeometry)Path.Data,
+                    to      : Text.ToPathGeometry(FontName, FontSize),
+                    speed   : AnimationSpeed,
+                    isCached: IsCached
                 );
+
+                if (IsCached)
+                {
+                    cache[transition] = textAnim.Cache;
+                }
             }
 
-            if (IsCached && !textAnimationIsCached) cache[(PreviousState, CurrentState)] = textAnimation;
-
-            textAnimationEnumerator = textAnimation.GetEnumerator();
+            if (!textAnimationNotFound)
+            {
+                textAnim = new TextAnimation(cache[transition]);
+            }
 
             CompositionTarget.Rendering -= RenderMorph;
             CompositionTarget.Rendering += RenderMorph;
@@ -123,6 +131,8 @@ namespace LanguageTrainer.Source.Controls
         public static readonly DependencyProperty StrokeThicknessProperty;
         public static readonly DependencyProperty AnimationSpeedProperty;
 
+
+        private PathGeometry targetPath;
 
         public string Text
         {
@@ -304,9 +314,9 @@ namespace LanguageTrainer.Source.Controls
 
         private void RenderMorph(object target, EventArgs e)
         {
-            if (textAnimationEnumerator.MoveNext())
+            if (textAnim.Move())
             {
-                Path.Data = textAnimationEnumerator.Current;
+                Path.Data = textAnim.GetFrame();
             }
             else
             {

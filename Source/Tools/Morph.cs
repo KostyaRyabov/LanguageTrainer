@@ -5,6 +5,18 @@ using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
+
+/* 
+ * ################################################################################################
+ * 
+ * Source  : https://gist.github.com/badamczewski/06d9c86e6d78fc79905f943cb3545f51
+ * 
+ *              Some parts of the code have been removed or rewritten
+ *           
+ * ################################################################################################
+ */
+
+
 namespace LanguageTrainer.Source.Tools
 {
     public static class Morph
