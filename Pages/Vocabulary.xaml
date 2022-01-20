@@ -1,0 +1,42 @@
+﻿<Page x:Class="LanguageTrainer.Pages.Vocabulary"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:LanguageTrainer.Pages"
+      xmlns:s="clr-namespace:System;assembly=System.Core"
+      xmlns:controls="clr-namespace:LanguageTrainer.Source.Controls"
+      xmlns:tools="clr-namespace:LanguageTrainer.Source.Tools"
+      mc:Ignorable="d"
+      DataContext="{Binding RelativeSource={RelativeSource self}}"
+      d:DesignHeight="200" d:DesignWidth="400"
+      Title="Vocabulary">
+    <Page.Resources>
+        <ResourceDictionary Source="pack://application:,,,/Source/Styles/DefaultControlsRedesign.xaml"/>
+    </Page.Resources>
+
+    <UniformGrid Columns="3" Rows="0">
+        <!--temporary solution-->
+
+        <StackPanel VerticalAlignment="Center">
+            <controls:MorphTextBox Text="word"/>
+            <controls:MorphTextBox Text="&lt;transcription>" FontSize="14"/>
+        </StackPanel>
+
+        <Expander Style="{DynamicResource AnimatedExpanderWithoutToggleButtonStyle}"
+                  IsExpanded="{Binding ElementName=timer, Path=IsFinished}"
+                  Panel.ZIndex="-1" VerticalAlignment="Center">
+            <Expander.Header>
+                <controls:Timer x:Name="timer" AlarmColor="Red"
+                            Seconds="30" Threshold="10" InitText="START" EndText="Oops!"/>
+            </Expander.Header>
+            
+            <UniformGrid Columns="2">
+                <controls:NavigateButton Width="50" Height="20" Content="Menu" NavigateUri="/Pages/MainMenu.xaml"/>
+                <controls:NavigateButton Width="50" Height="20" Content="Back" NavigateUri="/Pages/MainMenu.xaml"/>
+            </UniformGrid>
+        </Expander>
+
+        <controls:MorphTextBox Text="input"/>
+    </UniformGrid>
+</Page>
